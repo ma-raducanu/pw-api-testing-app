@@ -1,7 +1,18 @@
 import { test, expect } from '@playwright/test'
 import login from '../test-data/login.json'
-import newArticle from '../test-data/new-article.json'
+import newArticle1 from '../test-data/new-article-1.json'
+import newArticle2 from '../test-data/new-article-2.json'
 import updatedArticle from '../test-data/updated-article.json'
+
+let authToken: string;
+
+test.beforeAll(async ({ request }) => {
+  const tokenResponse = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
+    data: login
+  })
+  const tokenResponseJson = await tokenResponse.json()
+  authToken = `Token ${tokenResponseJson.user.token}`
+})
 
 test('Get Tags', async ({ request }) => { // page is not needed for pure API tests
   const tagsResponse = await request.get('https://conduit-api.bondaracademy.com/api/tags')
@@ -9,7 +20,6 @@ test('Get Tags', async ({ request }) => { // page is not needed for pure API tes
   expect(tagsResponse.status()).toBe(200)
   expect(tagsResponseJson.tags[0]).toBe('Test')
   expect(tagsResponseJson.tags.length).toBeLessThanOrEqual(10)
-  console.log(tagsResponseJson)
 });
 
 test('Get Articles', async ({ request }) => {
@@ -19,70 +29,54 @@ test('Get Articles', async ({ request }) => {
   expect(articlesResponseJson.articles[0].title).toContain('Bondar Academy')
   expect(articlesResponseJson.articles.length).toBeLessThanOrEqual(10)
   expect(articlesResponseJson.articlesCount).toBe(10)
-  console.log(articlesResponseJson)
 })
 
 test('Create and Delete Article', async ({ request }) => {
-  const tokenResponse = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
-    data: login
-  })
-  const tokenResponseJson = await tokenResponse.json()
-  const authToken = `Token ${tokenResponseJson.user.token}`
-  console.log(authToken)
   const newArticleResponse = await request.post('https://conduit-api.bondaracademy.com/api/articles/', {
-    data: newArticle,
+    data: newArticle1,
     headers: {
       Authorization: authToken
     }
   })
   const newArticleResponseJson = await newArticleResponse.json()
   expect(newArticleResponse.status()).toBe(201)
-  expect(newArticleResponseJson.article.title).toBe(newArticle.article.title)
-  expect(newArticleResponseJson.article.description).toBe(newArticle.article.description)
-  expect(newArticleResponseJson.article.body).toBe(newArticle.article.body)
-  expect(newArticleResponseJson.article.tagList).toEqual(newArticle.article.tagList)
+  expect(newArticleResponseJson.article.title).toBe(newArticle1.article.title)
+  expect(newArticleResponseJson.article.description).toBe(newArticle1.article.description)
+  expect(newArticleResponseJson.article.body).toBe(newArticle1.article.body)
+  expect(newArticleResponseJson.article.tagList).toEqual(newArticle1.article.tagList)
   const slugId = newArticleResponseJson.article.slug
   const articlesResponse = await request.get('https://conduit-api.bondaracademy.com/api/articles?limit=10&offset=0', {
-    data: updatedArticle,
     headers: {
       Authorization: authToken
     }
   })
   const articlesResponseJson = await articlesResponse.json()
   expect(articlesResponse.status()).toBe(200)
-  expect(articlesResponseJson.articles[0].title).toBe(newArticle.article.title)
-  expect(articlesResponseJson.articles[0].description).toBe(newArticle.article.description)
-  expect(articlesResponseJson.articles[0].body).toBe(newArticle.article.body)
-  expect(articlesResponseJson.articles[0].tagList).toEqual(newArticle.article.tagList)
+  expect(articlesResponseJson.articles[0].title).toBe(newArticle1.article.title)
+  expect(articlesResponseJson.articles[0].description).toBe(newArticle1.article.description)
+  expect(articlesResponseJson.articles[0].body).toBe(newArticle1.article.body)
+  expect(articlesResponseJson.articles[0].tagList).toEqual(newArticle1.article.tagList)
   const deleteArticleResponse = await request.delete(`https://conduit-api.bondaracademy.com/api/articles/${slugId}`, {
     headers: {
       Authorization: authToken
     }
   })
   expect(deleteArticleResponse.status()).toBe(204)
-  console.log(newArticleResponseJson)
-  console.log(articlesResponseJson)
 })
 
-test('Create, Update and  Article', async ({ request }) => {
-  const tokenResponse = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {
-    data: login
-  })
-  const tokenResponseJson = await tokenResponse.json()
-  const authToken = `Token ${tokenResponseJson.user.token}`
-  console.log(authToken)
+test('Create, Update and Delete Article', async ({ request }) => {
   const newArticleResponse = await request.post('https://conduit-api.bondaracademy.com/api/articles/', {
-    data: newArticle,
+    data: newArticle2,
     headers: {
       Authorization: authToken
     }
   })
   const newArticleResponseJson = await newArticleResponse.json()
   expect(newArticleResponse.status()).toBe(201)
-  expect(newArticleResponseJson.article.title).toBe(newArticle.article.title)
-  expect(newArticleResponseJson.article.description).toBe(newArticle.article.description)
-  expect(newArticleResponseJson.article.body).toBe(newArticle.article.body)
-  expect(newArticleResponseJson.article.tagList).toEqual(newArticle.article.tagList)
+  expect(newArticleResponseJson.article.title).toBe(newArticle2.article.title)
+  expect(newArticleResponseJson.article.description).toBe(newArticle2.article.description)
+  expect(newArticleResponseJson.article.body).toBe(newArticle2.article.body)
+  expect(newArticleResponseJson.article.tagList).toEqual(newArticle2.article.tagList)
   const slugId = newArticleResponseJson.article.slug
   const updateArticleResponse = await request.put(`https://conduit-api.bondaracademy.com/api/articles/${slugId}`, {
     data: updatedArticle,
@@ -114,6 +108,4 @@ test('Create, Update and  Article', async ({ request }) => {
     }
   })
   expect(deleteArticleResponse.status()).toBe(204)
-  console.log(newArticleResponseJson)
-  console.log(articlesResponseJson)
 })
