@@ -1,0 +1,10 @@
+{
+  "article": {
+    "title": "Test Title",
+    "description": "Test description",
+    "body": "Test article",
+    "tagList": [
+      "Test tags"
+    ]
+  }
+}
