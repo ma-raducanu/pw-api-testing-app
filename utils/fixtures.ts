@@ -1,5 +1,7 @@
 import { test as base } from '@playwright/test'
 import { RequestHandler } from './request-handler'
+import { APILogger } from './logger'
+import { setCustomExpectLogger } from './custom-assertions'
 
 export type TestOptions = {
   api: RequestHandler
@@ -8,9 +10,9 @@ export type TestOptions = {
 export const test = base.extend<TestOptions>({
   api: async ({ request }, use) => {
     const requestBaseUrl = 'https://conduit-api.bondaracademy.com/api'
-    const requestHandler = new RequestHandler(request, requestBaseUrl)
+    const logger = new APILogger()
+    setCustomExpectLogger(logger)
+    const requestHandler = new RequestHandler(request, requestBaseUrl, logger)
     await use(requestHandler)
   }
 })
-
-export { expect } from '@playwright/test'
