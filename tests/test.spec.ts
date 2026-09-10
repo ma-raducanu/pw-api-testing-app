@@ -14,7 +14,7 @@ test.beforeAll(async ({ request }) => {
   authToken = `Token ${tokenResponseJson.user.token}`
 })
 
-test('Get Tags', async ({ request }) => { // page is not needed for pure API tests
+test('Get tags', async ({ request }) => { // page is not needed for pure API tests
   const tagsResponse = await request.get('https://conduit-api.bondaracademy.com/api/tags')
   const tagsResponseJson = await tagsResponse.json()
   expect(tagsResponse.status()).toBe(200)
@@ -22,7 +22,7 @@ test('Get Tags', async ({ request }) => { // page is not needed for pure API tes
   expect(tagsResponseJson.tags.length).toBeLessThanOrEqual(10)
 });
 
-test('Get Articles', async ({ request }) => {
+test('Get articles', async ({ request }) => {
   const articlesResponse = await request.get('https://conduit-api.bondaracademy.com/api/articles?limit=10&offset=0')
   const articlesResponseJson = await articlesResponse.json()
   expect(articlesResponse.status()).toBe(200)
@@ -31,7 +31,7 @@ test('Get Articles', async ({ request }) => {
   expect(articlesResponseJson.articlesCount).toBe(10)
 })
 
-test('Create and Delete Article', async ({ request }) => {
+test('Create and delete article', async ({ request }) => {
   const newArticleResponse = await request.post('https://conduit-api.bondaracademy.com/api/articles/', {
     data: newArticle1,
     headers: {
@@ -64,7 +64,7 @@ test('Create and Delete Article', async ({ request }) => {
   expect(deleteArticleResponse.status()).toBe(204)
 })
 
-test('Create, Update and Delete Article', async ({ request }) => {
+test('Create, update and delete article', async ({ request }) => {
   const newArticleResponse = await request.post('https://conduit-api.bondaracademy.com/api/articles/', {
     data: newArticle2,
     headers: {
