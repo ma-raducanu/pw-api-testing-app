@@ -44,9 +44,39 @@ export class RequestHandler {
     const response = await this.request.get(url, {
       headers: this.requestHeaders
     })
-    const responseJson = await response.json()
     expect(response.status()).toBe(statusCode)
+    const responseJson = await response.json()
     return responseJson
+  }
+
+  async postRequest(statusCode: number) {
+    const url = this.getUrl()
+    const response = await this.request.post(url, {
+      headers: this.requestHeaders,
+      data: this.requestBody
+    })
+    expect(response.status()).toBe(statusCode)
+    const responseJson = await response.json()
+    return responseJson
+  }
+
+  async putRequest(statusCode: number) {
+    const url = this.getUrl()
+    const response = await this.request.put(url, {
+      headers: this.requestHeaders,
+      data: this.requestBody
+    })
+    expect(response.status()).toBe(statusCode)
+    const responseJson = await response.json()
+    return responseJson
+  }
+
+  async deleteRequest(statusCode: number) { // delete does not have a response body
+    const url = this.getUrl()
+    const response = await this.request.delete(url, {
+      headers: this.requestHeaders
+    })
+    expect(response.status()).toBe(statusCode)
   }
 
   private getUrl() {
