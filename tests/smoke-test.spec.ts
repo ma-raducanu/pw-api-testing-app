@@ -1,17 +1,14 @@
 import { test } from '../utils/fixtures'
 import { expect } from '../utils/custom-assertions'
-import login from '../test-data/login.json'
+import { createToken } from '../helpers/create-token'
 import newArticle1 from '../test-data/new-article-1.json'
 import updatedArticle from '../test-data/updated-article.json'
 
 let authToken: string
 
-test.beforeAll(async ({ api }) => {
-  const response = await api
-    .path('/users/login')
-    .body(login)
-    .postRequest(200)
-  authToken = `Token ${response.user.token}`
+test.beforeAll(async ({ api, config }) => {
+  // authToken = await createToken(api, config.userEmail, config.userPassword)
+  authToken = await createToken(config.userEmail, config.userPassword)
 })
 
 test('Get articles', async ({ api }) => {
@@ -41,6 +38,7 @@ test('Create and delete article', async ({ api }) => {
 
   const articlesResponse1 = await api
     .path('/articles')
+    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
   expect(articlesResponse1.articles[0].title).shouldEqual(newArticle1.article.title)
@@ -52,6 +50,7 @@ test('Create and delete article', async ({ api }) => {
 
   const articlesResponse2 = await api
     .path('/articles')
+    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
   expect(articlesResponse2.articles[0].title).not.shouldEqual(newArticle1.article.title)
@@ -76,6 +75,7 @@ test('Create update and delete article', async ({ api }) => {
 
   const articlesResponse1 = await api
     .path('/articles')
+    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
   expect(articlesResponse1.articles[0].title).shouldEqual(updatedArticle.article.title)
@@ -87,6 +87,7 @@ test('Create update and delete article', async ({ api }) => {
 
   const articlesResponse2 = await api
     .path('/articles')
+    .headers({ Authorization: authToken })
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
   expect(articlesResponse2.articles[0].title).not.shouldEqual(updatedArticle.article.title)
