@@ -7,15 +7,12 @@ const config = {
 }
 
 if(env === 'qa') {
-  config.apiUrl = 'https://qa-conduit-api.bondaracademy.com/api'
   config.userEmail = 'qa-mircea.alexandru.vi.raducanu@gmail.com'
   config.userPassword = 'Testing123!'
-} else if (env === 'dev') {
-  config.apiUrl = 'https://conduit-api.bondaracademy.com/api'
+}
+if (env === 'dev') {
   config.userEmail = 'mircea.alexandru.vi.raducanu@gmail.com'
   config.userPassword = 'Testing123!'
-} else {
-  throw new Error(`Unknown environment: ${env}`)
 }
 
 export { config }
