@@ -48,6 +48,7 @@ test('Create and delete article', async ({ api }) => {
     .headers({ Authorization: authToken })
     .deleteRequest(204)
 
+
   const articlesResponse2 = await api
     .path('/articles')
     .headers({ Authorization: authToken })
