@@ -10,8 +10,8 @@ export const setCustomExpectLogger = (logger: APILogger) => {
 declare global {
   namespace PlaywrightTest {
     interface Matchers<R, T> {
-      shouldEqual(expected: T): R;
-      shouldBeLessThanOrEqual(expected: T): R;
+      shouldEqual(expected: T): R
+      shouldBeLessThanOrEqual(expected: T): R
     }
   }
 }

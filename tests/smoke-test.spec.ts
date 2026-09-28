@@ -2,6 +2,7 @@ import { test } from '../utils/fixtures'
 import { expect } from '../utils/custom-assertions'
 import newArticle1 from '../test-data/new-article-1.json'
 import updatedArticle from '../test-data/updated-article.json'
+import { validateSchema } from '../utils/schema-validator'
 
 test('Get articles', async ({ api }) => {
   const articlesResponse = await api
@@ -17,6 +18,7 @@ test('Get tags', async ({ api }) => {
   const tagsResponse = await api
     .path('/tags')
     .getRequest(200)
+  await validateSchema('tags', 'GET_tags')
   expect(tagsResponse.tags.length).shouldBeLessThanOrEqual(10)
 })
 
@@ -27,18 +29,14 @@ test('Create and delete article', async ({ api }) => {
     .postRequest(201)
   expect(articleCreateResponse.article.title).shouldEqual(newArticle1.article.title)
   const slugId = articleCreateResponse.article.slug
-
   const articlesResponse1 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
   expect(articlesResponse1.articles[0].title).shouldEqual(newArticle1.article.title)
-
   await api
     .path(`/articles/${slugId}`)
     .deleteRequest(204)
-
-
   const articlesResponse2 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
@@ -53,24 +51,20 @@ test('Create update and delete article', async ({ api }) => {
     .postRequest(201)
   expect(articleCreateResponse.article.title).shouldEqual(newArticle1.article.title)
   const slugId = articleCreateResponse.article.slug
-
   const articleUpdateResponse = await api
     .path(`/articles/${slugId}`)
     .body(updatedArticle)
     .putRequest(200)
   expect(articleUpdateResponse.article.title).shouldEqual(updatedArticle.article.title)
   const updatedSlugId = articleUpdateResponse.article.slug
-
   const articlesResponse1 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
   expect(articlesResponse1.articles[0].title).shouldEqual(updatedArticle.article.title)
-
   await api
     .path(`/articles/${updatedSlugId}`)
     .deleteRequest(204)
-
   const articlesResponse2 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
