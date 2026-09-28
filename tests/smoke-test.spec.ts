@@ -1,7 +1,7 @@
 import { test } from '../utils/fixtures'
 import { expect } from '../utils/custom-assertions'
-import newArticle1 from '../test-data/new-article-1.json'
-import updatedArticle from '../test-data/updated-article.json'
+import articleRequestPayload from '../request-objects/POST-article.json'
+import updateArticleRequestPayload from '../request-objects/PUT-update-article.json'
 
 test('Get articles', async ({ api }) => {
   const articlesResponse = await api
@@ -24,18 +24,20 @@ test('Get tags', async ({ api }) => {
 })
 
 test('Create and delete article', async ({ api }) => {
+  const articleRequest = JSON.parse(JSON.stringify(articleRequestPayload)) // this method will fix concurrency issues by assigning different values to break the dependency when running parallel execution
+  articleRequest.article.title = 'This is an object title' // you can use this method to override the value from the request object
   const articleCreateResponse = await api
     .path('/articles')
-    .body(newArticle1)
+    .body(articleRequestPayload)
     .postRequest(201)
   await expect(articleCreateResponse).shouldMatchSchema('articles', 'POST_articles')
-  expect(articleCreateResponse.article.title).shouldEqual(newArticle1.article.title)
+  expect(articleCreateResponse.article.title).shouldEqual(articleRequestPayload.article.title)
   const slugId = articleCreateResponse.article.slug
   const articlesResponse1 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
-  expect(articlesResponse1.articles[0].title).shouldEqual(newArticle1.article.title)
+  expect(articlesResponse1.articles[0].title).shouldEqual(articleRequestPayload.article.title)
   await api
     .path(`/articles/${slugId}`)
     .deleteRequest(204)
@@ -43,33 +45,33 @@ test('Create and delete article', async ({ api }) => {
     .path('/articles')
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
-  expect(articlesResponse2.articles[0].title).not.shouldEqual(newArticle1.article.title)
+  expect(articlesResponse2.articles[0].title).not.shouldEqual(articleRequestPayload.article.title)
 })
 
-test('Create update and delete article', async ({ api }) => {
+test('Create, update and delete article', async ({ api }) => {
   const articleCreateResponse = await api
     .path('/articles')
-    .body(newArticle1)
+    .body(articleRequestPayload)
     .postRequest(201)
-  expect(articleCreateResponse.article.title).shouldEqual(newArticle1.article.title)
+  expect(articleCreateResponse.article.title).shouldEqual(articleRequestPayload.article.title)
   const slugId = articleCreateResponse.article.slug
   const articleUpdateResponse = await api
     .path(`/articles/${slugId}`)
-    .body(updatedArticle)
+    .body(updateArticleRequestPayload)
     .putRequest(200)
-  expect(articleUpdateResponse.article.title).shouldEqual(updatedArticle.article.title)
-  const updatedSlugId = articleUpdateResponse.article.slug
+  expect(articleUpdateResponse.article.title).shouldEqual(updateArticleRequestPayload.article.title)
+  const updateSlugId = articleUpdateResponse.article.slug
   const articlesResponse1 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
-  expect(articlesResponse1.articles[0].title).shouldEqual(updatedArticle.article.title)
+  expect(articlesResponse1.articles[0].title).shouldEqual(updateArticleRequestPayload.article.title)
   await api
-    .path(`/articles/${updatedSlugId}`)
+    .path(`/articles/${updateSlugId}`)
     .deleteRequest(204)
   const articlesResponse2 = await api
     .path('/articles')
     .params({ limit: 10, offset: 0 })
     .getRequest(200)
-  expect(articlesResponse2.articles[0].title).not.shouldEqual(updatedArticle.article.title)
+  expect(articlesResponse2.articles[0].title).not.shouldEqual(updateArticleRequestPayload.article.title)
 })
