@@ -2,7 +2,6 @@ import { test } from '../utils/fixtures'
 import { expect } from '../utils/custom-assertions'
 import newArticle1 from '../test-data/new-article-1.json'
 import updatedArticle from '../test-data/updated-article.json'
-import { validateSchema } from '../utils/schema-validator'
 
 test('Get articles', async ({ api }) => {
   const articlesResponse = await api
@@ -18,7 +17,8 @@ test('Get tags', async ({ api }) => {
   const tagsResponse = await api
     .path('/tags')
     .getRequest(200)
-  await validateSchema('tags', 'GET_tags')
+  expect(tagsResponse).shouldMatchSchema('tags', 'GET_tags')
+  expect(tagsResponse.tags[0]).shouldEqual('Test')
   expect(tagsResponse.tags.length).shouldBeLessThanOrEqual(10)
 })
 
