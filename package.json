@@ -11,6 +11,8 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.5.0",
-    "ajv": "^8.20.0"
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "genson-js": "^0.0.8"
   }
 }

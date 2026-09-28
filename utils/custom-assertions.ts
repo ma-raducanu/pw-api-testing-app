@@ -13,17 +13,17 @@ declare global {
     interface Matchers<R, T> {
       shouldEqual(expected: T): R
       shouldBeLessThanOrEqual(expected: T): R
-      shouldMatchSchema(dirName: string, filename: string): Promise<R>
+      shouldMatchSchema(dirName: string, filename: string, createSchemaFlag?: boolean): Promise<R>
     }
   }
 }
 
 export const expect = baseExpect.extend({
-  async shouldMatchSchema(received: any, dirName: string, fileName: string) {
+  async shouldMatchSchema(received: any, dirName: string, fileName: string, createSchemaFlag: boolean = false) { // you can change the default value of createSchemaFlag to true in order to generate new schemas for every test instead of doing it for each test individually
     let pass: boolean
     let message: string = ''
     try {
-      await validateSchema(dirName, fileName, received)
+      await validateSchema(dirName, fileName, received, createSchemaFlag)
       pass = true
       message = 'Schema validation passed'
     } catch (e: any) {

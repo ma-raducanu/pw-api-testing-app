@@ -9,6 +9,7 @@ test('Get articles', async ({ api }) => {
     .params({ limit: 10, offset: 0 })
     .clearAuth()
     .getRequest(200)
+  await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles') // remember to remove the true flag after generating the schema or your test will always pass
   expect(articlesResponse.articles.length).shouldBeLessThanOrEqual(10)
   expect(articlesResponse.articlesCount).shouldEqual(10)
 })
@@ -17,7 +18,7 @@ test('Get tags', async ({ api }) => {
   const tagsResponse = await api
     .path('/tags')
     .getRequest(200)
-  expect(tagsResponse).shouldMatchSchema('tags', 'GET_tags')
+  await expect(tagsResponse).shouldMatchSchema('tags', 'GET_tags')
   expect(tagsResponse.tags[0]).shouldEqual('Test')
   expect(tagsResponse.tags.length).shouldBeLessThanOrEqual(10)
 })
@@ -27,6 +28,7 @@ test('Create and delete article', async ({ api }) => {
     .path('/articles')
     .body(newArticle1)
     .postRequest(201)
+  await expect(articleCreateResponse).shouldMatchSchema('articles', 'POST_articles')
   expect(articleCreateResponse.article.title).shouldEqual(newArticle1.article.title)
   const slugId = articleCreateResponse.article.slug
   const articlesResponse1 = await api
