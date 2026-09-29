@@ -41,7 +41,7 @@
               "type": "string"
             },
             "bio": {
-              "type": "string"
+              "type": "null"
             },
             "image": {
               "type": "string"
