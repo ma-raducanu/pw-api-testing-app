@@ -1,4 +1,7 @@
 import { defineConfig } from '@playwright/test';
+import dotenv from 'dotenv'
+import path from 'path'
+dotenv.config({ path: path.resolve(__dirname, '.env') })
 
 export default defineConfig({
   testDir: './tests',
@@ -15,17 +18,26 @@ export default defineConfig({
     //   username: process.env.API_USERNAME || '',
     //   password: process.env.API_PASSWORD || ''
     // }
+    baseURL: 'https://conduit.bondaracademy.com',
     trace: 'retain-on-failure'
   },
   projects: [
     {
       name: 'api-test',
-      testMatch: 'api*',
-      dependencies: ['smoke-test']
+      testDir: './tests/api-tests',
+      dependencies: ['api-smoke-test']
     },
     {
-      name: 'smoke-test',
-      // testMatch: 'smoke*'
+      name: 'api-smoke-test',
+      testDir: './tests/api-tests',
+      testMatch: 'smoke*'
     },
+    {
+      name: 'ui-smoke-test',
+      testDir: './tests/ui-tests',
+      use: {
+        defaultBrowserType: 'chromium'
+      }
+    }
   ],
 });

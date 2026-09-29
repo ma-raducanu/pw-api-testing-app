@@ -1,5 +1,5 @@
-import { test } from '../utils/fixtures'
-import { expect } from '../utils/custom-assertions'
+import { test } from '../../utils/fixtures'
+import { expect } from '../../utils/custom-assertions'
 
 [
   {

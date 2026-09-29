@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
-import loginRequestPayload from '../request-objects/POST-login.json'
-import articleRequestPayload from '../request-objects/POST-article.json'
-import updateArticleRequestPayload from '../request-objects/PUT-update-article.json'
+import loginRequestPayload from '../../request-objects/POST-login.json'
+import articleRequestPayload from '../../request-objects/POST-article.json'
+import updateArticleRequestPayload from '../../request-objects/PUT-update-article.json'
 
-let authToken: string;
+let authToken: string
 
 test.beforeAll(async ({ request }) => {
   const tokenResponse = await request.post('https://conduit-api.bondaracademy.com/api/users/login', {

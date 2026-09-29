@@ -1,9 +1,6 @@
-import { test } from '../utils/fixtures'
-import { expect } from '../utils/custom-assertions'
-import articleRequestPayload from '../request-objects/POST-article.json'
-import updateArticleRequestPayload from '../request-objects/PUT-update-article.json'
-import { faker } from '@faker-js/faker'
-import { getNewRandomArticle } from '../utils/data-generator'
+import { test } from '../../utils/fixtures'
+import { expect } from '../../utils/custom-assertions'
+import { getNewRandomArticle } from '../../utils/data-generator'
 
 test('Get articles', async ({ api }) => {
   const articlesResponse = await api
