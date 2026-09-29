@@ -11,6 +11,10 @@ test('Get articles', async ({ api }) => {
   await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles') // remember to remove the true flag after generating the schema or your test will always pass
   expect(articlesResponse.articles.length).shouldBeLessThanOrEqual(10)
   expect(articlesResponse.articlesCount).shouldEqual(10)
+  articlesResponse.articles.forEach((article: { title: string; slug: string }) => { // added with copilot
+    const expectedPattern = new RegExp(article.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/,/g, '').replace(/\s+/g, '-') + '-\\d+$')
+    expect(article.slug).toMatch(expectedPattern)
+  })
 })
 
 test('Get tags', async ({ api }) => {

@@ -9,7 +9,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : 1,
-  reporter: [['html'], ['list']],
+  reporter: [['html', {open: 'never'}], ['list']], // add the never flag for html so there is no conflict with copilot in the terminal
   use: {
     // extraHTTPHeaders: {
     //   // Authorization: `Token ${process.env.API_TOKEN}` // this will add the Authorization header to all requests, but it can't be removed when you need to test requests without it.
