@@ -36,11 +36,25 @@ async function loadSchema(schemaPath: string) {
 async function generateNewSchema(responseBody: object, schemaPath: string) {
   try {
     const generatedSchema = createSchema(responseBody)
+    addDateTimeFormat(generatedSchema)
     await fs.mkdir(path.dirname(schemaPath), { recursive: true }) // recursive will make sure that if the folder already exists, it will not replace it
     await fs.writeFile(schemaPath, JSON.stringify(generatedSchema, null, 2))
   } catch (error) {
     throw new Error(`Failed to create schema file: ${getErrorMessage(error)}`)
   }
+}
+
+function addDateTimeFormat(schema: any) {
+  if (!schema || typeof schema !== 'object') return
+  if (schema.properties && typeof schema.properties === 'object') {
+    for (const [key, propSchema] of Object.entries(schema.properties) as [string, any][]) {
+      if ((key === 'createdAt' || key === 'updatedAt') && propSchema?.type) {
+        propSchema.format = 'date-time'
+      }
+      addDateTimeFormat(propSchema)
+    }
+  }
+  if (schema.items) addDateTimeFormat(schema.items)
 }
 
 function getErrorMessage(error: unknown): string {
