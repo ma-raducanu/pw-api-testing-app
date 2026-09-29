@@ -15,6 +15,7 @@ export default defineConfig({
     //   username: process.env.API_USERNAME || '',
     //   password: process.env.API_PASSWORD || ''
     // }
+    trace: 'retain-on-failure'
   },
   projects: [
     {
